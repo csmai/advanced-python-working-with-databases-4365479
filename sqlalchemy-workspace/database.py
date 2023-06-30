@@ -8,9 +8,9 @@ table_object = sqlalchemy.Table(
     "Users",
     metadata,
     sqlalchemy.Column("user_id", sqlalchemy.Integer, primary_key=True),
-    sqlalchemy.Column("first_name", sqlalchemy.Text),
-    sqlalchemy.Column("last_name", sqlalchemy.Text),
-    sqlalchemy.Column("email", sqlalchemy.Text),
+    sqlalchemy.Column("first_name", sqlalchemy.String),
+    sqlalchemy.Column("last_name", sqlalchemy.String),
+    sqlalchemy.Column("email", sqlalchemy.String),
 )
 
 metadata.create_all(engine)
