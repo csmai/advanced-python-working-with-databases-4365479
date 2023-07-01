@@ -2,9 +2,8 @@ import mysql.connector as mysql
 import os
 
 
-def connect(db_name):
+def connect(db_name, password):
     try:
-        password = os.environ.get("P4PASSWD")
         return mysql.connect(
             host="localhost", database=db_name, user="root", password=password
         )
@@ -17,7 +16,7 @@ def add_project(cursor, project_title, project_description, tasks):
 
 
 if __name__ == "__main__":
-    db = connect("projects2")
+    db = connect("projects2", os.environ.get("P4PASSWD"))
 
     cursor = db.cursor()
 
