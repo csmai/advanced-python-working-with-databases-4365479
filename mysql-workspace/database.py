@@ -1,10 +1,12 @@
 import mysql.connector as mysql
+import os
 
 
 def connect(db_name):
     try:
+        password = os.environ.get("P4PASSWD")
         return mysql.connect(
-            host="localhost", database=db_name, user="root", password="..."
+            host="localhost", database=db_name, user="root", password=password
         )
     except mysql.Error as e:
         print(e)
@@ -15,7 +17,7 @@ def add_project(cursor, project_title, project_description, tasks):
 
 
 if __name__ == "__main__":
-    db = connect("projects")
+    db = connect("projects2")
 
     cursor = db.cursor()
 
