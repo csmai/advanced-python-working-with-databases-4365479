@@ -52,3 +52,7 @@ with engine.connect() as conn:
     selection = conn.execute(select_email_query)
     for row in selection:
         print(row)
+
+    # Print out everything
+    for row in conn.execute(table_object.select()):
+        print(row)
