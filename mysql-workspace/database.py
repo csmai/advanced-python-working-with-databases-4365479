@@ -6,7 +6,7 @@ def connect(db_name):
 							 database=db_name,
 							 user='root',
 							 password="password")
-	except Error as e:
+	except mysql.Error as e:
 		print(e)
 
 def add_project(cursor, project_title, project_description, tasks):
