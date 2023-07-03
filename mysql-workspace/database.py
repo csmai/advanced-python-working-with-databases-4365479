@@ -1,6 +1,8 @@
 import mysql.connector as mysql
 import os
 
+# This code adds some additional data to the existing projects database
+
 
 def connect(db_name, password):
     try:
@@ -12,11 +14,13 @@ def connect(db_name, password):
 
 
 def add_project(cursor, project_title, project_description, tasks):
-    pass
+    cursor.execute(
+        "INSERT INTO projects VALUES(%s, %s)", (project_title, project_description)
+    )
 
 
 if __name__ == "__main__":
-    db = connect("projects2", os.environ.get("P4PASSWD"))
+    db = connect("projects", os.environ.get("P4PASSWD"))
 
     cursor = db.cursor()
 
