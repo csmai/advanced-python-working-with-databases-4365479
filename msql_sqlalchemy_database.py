@@ -1,6 +1,6 @@
 import sqlalchemy
 import os
-from sqlalchemy.orm import registry
+from sqlalchemy.orm import registry, Session
 
 password = os.getenv("P4PASSWD")
 
@@ -23,7 +23,7 @@ class Projects(Base):
 
 
 class Tasks(Base):
-    __tablename__ = "Tasks"
+    __tablename__ = "tasks"
     task_id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
     description = sqlalchemy.Column(sqlalchemy.String(50))
     project_id = sqlalchemy.Column(
@@ -34,5 +34,43 @@ class Tasks(Base):
 
     def __repr__(self) -> str:
         return f"Task(description={self.description})"
-    
 
+
+Base.metadata.create_all(engine)
+
+with Session(engine) as session:
+    organize_project = Projects(
+        title="Organize Closet", description="Organize Closet by color and style"
+    )
+
+    session.add(organize_project)
+
+    session.flush()
+
+    tasks = [
+        Tasks(
+            description="Decide what to donate", project_id=organize_project.project_id
+        ),
+        Tasks(
+            description="Organize winter clothes",
+            project_id=organize_project.project_id,
+        ),
+        Tasks(
+            description="Organize summer clothes",
+            project_id=organize_project.project_id,
+        ),
+    ]
+    session.bulk_save_objects(tasks)
+    session.commit()
+
+with Session(engine) as session:
+    stm = sqlalchemy.select(Projects).where(Projects.title == "Organize Closet")
+    results = session.execute(stm).fetchall()
+    # results.scalar()
+
+    stm = sqlalchemy.select(Tasks).where(
+        Tasks.project_id == organize_project.project_id
+    )
+    results = session.execute(stm).fetchall()
+    for row in results:
+        print(row)
