@@ -19,7 +19,7 @@ class Projects(Base):
     description = sqlalchemy.Column(sqlalchemy.String(length=100))
 
     def __repr__(self) -> str:
-        return f"Project(title={self.title}, description={self.description})"
+        return f"Project(title={self.title}, description={self.description}, project_id={self.project_id})"
 
 
 class Tasks(Base):
@@ -63,14 +63,15 @@ with Session(engine) as session:
     session.bulk_save_objects(tasks)
     session.commit()
 
+
 with Session(engine) as session:
     stm = sqlalchemy.select(Projects).where(Projects.title == "Organize Closet")
-    results = session.execute(stm).fetchall()
-    # results.scalar()
+    org_closet_project = session.execute(stm).fetchone()
+    print(org_closet_project)
 
     stm = sqlalchemy.select(Tasks).where(
-        Tasks.project_id == organize_project.project_id
+        Tasks.project_id == org_closet_project[0].project_id
     )
     results = session.execute(stm).fetchall()
     for row in results:
-        print(row)
+        print(row[0])
