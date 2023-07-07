@@ -16,11 +16,10 @@ def create_database(engine):
     # Create the database if it doesn't exist
     with engine.connect() as conn:
         conn.execute(text(f"CREATE DATABASE IF NOT EXISTS {db_name}"))
-        conn.execute(text(f"USE {db_name}"))
 
 
 if __name__ == "__main__":
-    db_name = "Red30_2"
+    db_name = "Red30_3"
     password = os.getenv("P4PASSWD")
     database_conn_str = f"mysql+mysqlconnector://root:{password}@localhost"
 
@@ -108,8 +107,9 @@ if __name__ == "__main__":
         session.add_all(sales_data)
 
         query = select(Sales).order_by(desc(Sales.order_total))
+        # Solution 1
         most_expensive_order = session.execute(query).fetchone()
         print(most_expensive_order[0].cust_name, most_expensive_order[0].order_total)
-
+        # Solution 2
         most_expensive_order = session.execute(query).scalar()
         print(most_expensive_order.cust_name, most_expensive_order.order_total)
