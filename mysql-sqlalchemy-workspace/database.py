@@ -1,10 +1,19 @@
-from sqlalchemy import Column, String, Integer, Numeric, create_engine
+from sqlalchemy import (
+    Column,
+    String,
+    Integer,
+    Numeric,
+    create_engine,
+    select,
+    func,
+    desc,
+)
 from sqlalchemy.orm import registry, Session
 import os
 
 password = os.getenv("P4PASSWD")
 engine = create_engine(
-    f"mysql+mysqlconnector://root:{password}@localhost:3306/red30", echo=True
+    f"mysql+mysqlconnector://root:{password}@localhost:3306/red30", echo=False
 )
 
 mapper_registry = registry()
@@ -89,7 +98,19 @@ with Session(engine, future=True) as session:
 
     sales = [sale_1, sale_2, sale_3, sale_4, sale_5]
 
-    session.bulk_save_objects(sales)
+    # session.bulk_save_objects(sales)
 
     session.flush()
     session.commit()
+
+    query = select(Sale).order_by(desc(Sale.order_total))
+    descending_list = session.execute(query).fetchall()
+    for row in descending_list:
+        print(row)
+
+# Nem műkodik
+# query = select(func.max(Sale.order_total))
+# result_element = session.execute(query).fetchall()
+# # print(type(result_element))
+# # breakpoint()
+# print(result_element[0].cust_name, result_element[0].order_total)
