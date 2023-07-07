@@ -26,7 +26,7 @@ if __name__ == "__main__":
     db_creator_engine = create_engine(database_conn_str, echo=True)
     create_database(db_creator_engine)
 
-    engine = create_engine(database_conn_str + f"/{db_name}", echo=True)
+    engine = create_engine(f"{database_conn_str}/{db_name}", echo=True)
 
     mapper_registry = registry()
     Base = mapper_registry.generate_base()
@@ -104,7 +104,11 @@ if __name__ == "__main__":
     ]
 
     with Session(engine) as session:
+
+        # Memory-loss but gives the good solution
         session.add_all(sales_data)
+        # Gives bad solution, 95 istead of 95.94
+        # session.bulk_save_objects(sales_data)
 
         query = select(Sales).order_by(desc(Sales.order_total))
         # Solution 1
