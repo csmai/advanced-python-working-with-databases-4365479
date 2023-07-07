@@ -1,38 +1,26 @@
-from sqlalchemy import create_engine, text, Column, Integer, String, Numeric, select
+from sqlalchemy import (
+    create_engine,
+    text,
+    Column,
+    Integer,
+    String,
+    Numeric,
+    select,
+    desc,
+)
 from sqlalchemy.orm import Session, registry
 import os
 
 
 def create_database(engine):
     # Create the database if it doesn't exist
-    with engine.connect() as connection:
-        connection.execute(text(f"CREATE DATABASE IF NOT EXISTS {db_name}"))
-
-
-def create_sales_table(engine):
-    with engine.connect() as connection:
-        connection.execute(text(f"USE {db_name}"))
-        connection.execute(
-            text(
-                """
-            CREATE TABLE IF NOT EXISTS sales (
-                order_num INT PRIMARY KEY,
-                order_type VARCHAR(50),
-                cust_name VARCHAR(50),
-                prod_number VARCHAR(50),
-                prod_name VARCHAR(50),
-                quantity INT,
-                price DECIMAL(10, 2),
-                discount DECIMAL(10, 2),
-                order_total DECIMAL(10, 2)
-            )
-        """
-            )
-        )
+    with engine.connect() as conn:
+        conn.execute(text(f"CREATE DATABASE IF NOT EXISTS {db_name}"))
+        conn.execute(text(f"USE {db_name}"))
 
 
 if __name__ == "__main__":
-    db_name = "Red30"
+    db_name = "Red30_2"
     password = os.getenv("P4PASSWD")
     database_conn_str = f"mysql+mysqlconnector://root:{password}@localhost"
 
@@ -40,22 +28,23 @@ if __name__ == "__main__":
     create_database(db_creator_engine)
 
     engine = create_engine(database_conn_str + f"/{db_name}", echo=True)
+
     mapper_registry = registry()
     Base = mapper_registry.generate_base()
-    Base.metadata.create_all(engine)
-    create_sales_table(engine)
 
     class Sales(Base):
         __tablename__ = "sales"
         order_num = Column(Integer, primary_key=True)
-        order_type = Column(String)
-        cust_name = Column(String)
-        prod_number = Column(String)
-        prod_name = Column(String)
+        order_type = Column(String(30))
+        cust_name = Column(String(30))
+        prod_number = Column(String(30))
+        prod_name = Column(String(30))
         quantity = Column(Integer)
         price = Column(Numeric)
         discount = Column(Numeric)
         order_total = Column(Numeric)
+
+    Base.metadata.create_all(engine)
 
     sales_data = [
         Sales(
@@ -114,12 +103,13 @@ if __name__ == "__main__":
             order_total=44.98,
         ),
     ]
-    # with Session(engine) as session:
-    #     # Create 5 instances of sales and add them to the session
-
-    #     session.bulk_save_objects(sales_data)
-    #     session.commit()
 
     with Session(engine) as session:
-        for row in result:
-            print(row)
+        session.add_all(sales_data)
+
+        query = select(Sales).order_by(desc(Sales.order_total))
+        most_expensive_order = session.execute(query).fetchone()
+        print(most_expensive_order[0].cust_name, most_expensive_order[0].order_total)
+
+        most_expensive_order = session.execute(query).scalar()
+        print(most_expensive_order.cust_name, most_expensive_order.order_total)
