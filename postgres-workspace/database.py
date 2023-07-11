@@ -1,12 +1,16 @@
 from sqlalchemy import create_engine
-from sqlalchemy import Table, Column, Integer, Float, String, MetaData
+from sqlalchemy import Table, Column, Integer, Float, String, MetaData, select
+import os
 
-engine = create_engine('postgresql+psycopg2://postgres:password@localhost/red30', 
-	echo=True)
+password = os.getenv("P4PASSWD")
+
+engine = create_engine(
+    f"postgresql+psycopg2://postgres:{password}@localhost/red30", echo=True
+)
 metadata = MetaData()
 
-# sales_table = Table('sales', 
-#       metadata,  
+# sales_table = Table('sales',
+#       metadata,
 #       Column('order_num', Integer, primary_key=true),
 #       Column('cust_name', String),
 #       Column('prod_number', String),
@@ -16,6 +20,9 @@ metadata = MetaData()
 #       Column('discount', Float),
 #       Column('order_total', Float))
 
-sales_table = Table('sales', metadata, autoload_with=engine)
+sales_table = Table("sales", metadata, autoload_with=engine)
 
 metadata.create_all(engine)
+
+with engine.connect() as conn:
+    result = conn.execute(select(sales_table))
