@@ -19,7 +19,7 @@ def create_database(engine):
 
 
 if __name__ == "__main__":
-    db_name = "Red30_3"
+    db_name = "Red30_2"
     password = os.getenv("P4PASSWD")
     database_conn_str = f"mysql+mysqlconnector://root:{password}@localhost"
 
@@ -43,6 +43,7 @@ if __name__ == "__main__":
         discount = Column(Numeric)
         order_total = Column(Numeric)
 
+    # ¨Table creation in database - this should work but it doesn't
     Base.metadata.create_all(engine)
 
     sales_data = [
@@ -104,7 +105,6 @@ if __name__ == "__main__":
     ]
 
     with Session(engine) as session:
-
         # Memory-loss but gives the good solution
         session.add_all(sales_data)
         # Gives bad solution, 95 istead of 95.94
