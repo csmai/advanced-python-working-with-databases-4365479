@@ -30,7 +30,7 @@ sales = [
     ),
 ]
 
-cursor.executemany("INSERT INTO sales VALUES (%s, %s, %s, %s, %s, %s, %s)", sales)
+cursor.executemany("INSERT INTO sales VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", sales)
 
 conn.commit()
 conn.close()
