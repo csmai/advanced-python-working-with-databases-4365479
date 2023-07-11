@@ -11,7 +11,7 @@ def insert_sale(
     if discount != 0:
         order_total = order_total - order_total * discount
 
-    sales_data = {
+    sale_data = {
         "order_num": order_num,
         "cust_name": cust_name,
         "prod_number": prod_number,
@@ -24,14 +24,9 @@ def insert_sale(
 
     cur.execute(
         """INSERT INTO sales VALUES (%(order_num)s, 
-               %(cust_name)s,
-               %(prod_number)s,
-               %(prod_name)s,
-               %(quantity)s,
-               %(price)s,
-               %(discount)s,
-               %(order_total)s),""",
-        sales_data,
+		%(cust_name)s, %(prod_number)s, %(prod_name)s, %(quantity)s, 
+		%(price)s, %(discount)s, %(order_total)s)""",
+        sale_data,
     )
 
 
