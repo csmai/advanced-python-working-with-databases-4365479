@@ -108,11 +108,16 @@ def add_book(title, number_of_pages, first_name, last_name):
         ).scalar()
 
         if existing_author is not None:
-            print("Author exists! Adding book")
-            session.flush()
-            pairing = BookAuthor(
-                author_id=existing_author.author_id, book_id=book.book_id
-            )
+            print("Author exists! Checking book")
+            if existing_book is None:
+                print("Book does not exists! Adding book")
+                session.flush()
+                pairing = BookAuthor(
+                    author_id=existing_author.author_id, book_id=book.book_id
+                )
+            else:
+                print("Book exists")
+                return
         else:
             print("Author does not exist. Adding author")
             session.add(author)
@@ -131,8 +136,8 @@ if __name__ == "__main__":
     print("Input new book:\n")
     title = "BO"  #  input("What is the title of the book?\n")
     number_of_pages = 100  #  int(input("How many pages are in the book?\n"))
-    first_name = "SSS"  # input("What is the first name of the author?\n")
-    last_name = "FFF"  # input("What is the last name of the author?\n")
+    first_name = "FFF"  # input("What is the first name of the author?\n")
+    last_name = "QWE"  # input("What is the last name of the author?\n")
     print("Inputting book data:\n")
 
     add_book(title, number_of_pages, first_name, last_name)
